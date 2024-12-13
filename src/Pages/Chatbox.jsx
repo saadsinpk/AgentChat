@@ -95,23 +95,13 @@ function Chatbox({
   const handleSendMessage = () => {
     if (newMessage) {
       let messageData;
-      if (accessKey == true) {
-        messageData = {
-          senderId: 'sender@gmail.com',
-          messageContent: newMessage,
-          accessKey: user?.accessKey,
-          receiverId: groupIds,
-          timestamp: new Date().toISOString(), // Add timestamp for sorting message
-        };
-      } else {
-        messageData = {
-          senderId: user?.chatId,
-          messageContent: newMessage,
-          accessKey: user?.accessKey,
-          groupId: groupIds,
-          timestamp: new Date().toISOString(), // Add timestamp for sorting message
-        };
-      }
+      messageData = {
+        senderId: 'sender@gmail.com',
+        messageContent: newMessage,
+        accessKey: user?.accessKey,
+        receiverId: groupIds,
+        timestamp: new Date().toISOString(), // Add timestamp for sorting message
+      };
       console.log("messageData", messageData);
       socket.emit("sendMessageUser", messageData);
       formatMessageDate(new Date());
