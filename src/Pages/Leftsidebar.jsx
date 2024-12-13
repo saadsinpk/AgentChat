@@ -32,7 +32,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
     setLoadingMore(true); // Set loading state while fetching
     try {
       const response = await axios.get(
-        `${SOCKET_SERVER_URL}api/chats/users?userEmail=${agentEmail}&search=${search||""}&perPage=10&page=${pagenum||1}`);
+        `${SOCKET_SERVER_URL}/api/chats/users?userEmail=${'sender@gmail.com'|| agentEmail}&search=${search||""}&perPage=10&page=${pagenum||1}`);
 
       if (response) {
         const newUsers = response?.data?.users || [];

@@ -44,14 +44,10 @@ function Chatbox({
     // Construct URL based on accessKey
     const idParam = groupIds;
     const idKey = accessKey === true ? "receiverId" : "groupId";
-    const url = `${SOCKET_SERVER_URL}/api/chats/history?${idKey}=${idParam}&senderId=${user?.chatId}&page=${currentchatpage}&perPage=10000`;
+    const url = `${SOCKET_SERVER_URL}/api/chats/history?otherUserEmail=${groupIds}&userEmail=sender@gmail.com`;
 
     try {
-      const res = await axios.get(url, {
-        headers: {
-          accesskey: user?.accessKey,
-        },
-      });
+      const res = await axios.get(url);
       console.log("Response:", res); // Log response for debugging
       setChatHistory(res.data.messages);
     } catch (error) {
@@ -101,7 +97,7 @@ function Chatbox({
       let messageData;
       if (accessKey == true) {
         messageData = {
-          senderId: user?.chatId,
+          senderId: 'sender@gmail.com',
           messageContent: newMessage,
           accessKey: user?.accessKey,
           receiverId: groupIds,
@@ -159,37 +155,6 @@ function Chatbox({
     }
   }, [chatHistory]);
 
- 
-
-  const handleDelete = () => {
-    setisdelete(true)
-  };
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleDeleteGroup = async () => {
-    try {
-      const res = await axios.delete(`${SOCKET_SERVER_URL}/api/chats/group/${groupIds}`, {
-        headers: {
-          accesskey: user?.accessKey,
-        },
-      });
-      console.log(res);
-      if (res?.data?.success == true) {
-        toast({
-          title: t("Successfull"),
-          duration: 900,
-          status: "success",
-          position: "top-right",
-          isClosable: true,
-        });
-        return
-      }
-    } catch (error) {
-
-    }
-  };
   return (
     <div className="w-full ">
       <div className="flex justify-between items-center p-4 border-b-2 border-gray-200">
@@ -213,67 +178,13 @@ function Chatbox({
             {ContactName ? ContactName : "Unknown"}
           </p>
         </div>
-
-        {/* Right side - Optional placeholder for additional elements */}
-        {/* <div className="flex gap-2 items-center">
-          <Button
-            colorScheme="white"
-            size="md"
-            bg="#19335F"
-            color="white"
-            _hover={{ bg: "#19335F" }} // Keeps the same background color on hover
-            onClick={() => navigate("/chat/creategroupchat")}
-            className="font-Cairo"
-          >
-            <IoMdAdd className="me-1" />"createChat"
-          </Button>
-          {groupIds && (
-            <MdMoreVert
-              className="text-red-500 text-[20px] cursor-pointer"
-              onClick={toggleDropdown}
-            />
-          )}
-          {isDropdownOpen && (
-            <div
-            ref={dropdownRef}
-              className={`absolute right-0 mt-2 w-[150px] bg-white border border-gray-300 rounded shadow-lg z-50 
-            transition-all duration-300 ease-in-out transform top-[50px] right-[30px] ${
-              isDropdownOpen
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-95 pointer-events-none"
-            }`}
-            >
-              <ul className="py-1">
-                <li
-                  onClick={() => {
-                    navigate(`/chat/updategroupchat/${groupIds}`);
-                    setIsDropdownOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-blue-500 border-b-[1px]"
-                >
-                  {t("Edit")}
-                </li>
-                <li
-                  onClick={() => {
-                    handleDelete()
-                    setIsDropdownOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-red-500"
-                >
-                  {t('Delete')}
-                </li>
-              </ul>
-            </div>
-          )}
-        </div> */}
       </div>
       <div className="flex flex-col space-y-4 mb-4 max-h-[500px] overflow-y-auto py-5 px-3">
         {groupIds ? (
           <>
-            {chatHistory && chatHistory.length > 0 ? (
+            {chatHistory && chatHistory?.length > 0 ? (
               <div className="flex flex-col flex-grow overflow-y-auto max-h-[97%]">
-                {/* Mapping through chat history */}
-                {chatHistory.map((msg, index) => {
+                {chatHistory?.map((msg, index) => {
                   const messageDate = new Date(msg?.timestamp);
                   const formattedMessageDate = formatMessageDate(messageDate);
 
@@ -289,57 +200,36 @@ function Chatbox({
                     <div key={index}>
                       {index === 0 || isDifferentDay ? (
                         <div className="flex justify-center my-8">
-                         <h6  className="p-1 rounded-md text-[#B69B30]">
+                          <h6 className="p-1 rounded-md text-white">
                             {formattedMessageDate}
-                         </h6>
+                          </h6>
                         </div>
                       ) : null}
                       <div
                         className={`flex ${
-                          msg?.sender?._id === user?.chatId
+                          msg?.sender?._id === "sender@gmail.com"
                             ? "justify-end"
                             : "justify-start"
                         } mb-2`}
                       >
-                        {msg?.sender?._id !== user?.chatId && (
+                        {msg?.sender?.senderEmail !== "sender@gmail.com" && (
                           <div className="flex items-start max-w-[70%] ml-2">
-                            <div className=" text-[white] bg-[#B69B30] rounded-r-xl rounded-bl-xl py-2 px-3">
-                              <Text fontSize="sm">{msg?.message}</Text>
+                            <div className="text-[white] bg-[#19335F] rounded-r-xl rounded-bl-xl py-2 px-3">
+                              <div className="text-sm">{msg?.message}</div>
                             </div>
-                            <Text
-                              color="#CDD1ce"
-                              fontSize="xs"
-                              textAlign="start"
-                              className="ml-2"
+                            <div
+                              className="text-xs text-[#CDD1ce] ml-2"
+                              style={{ textAlign: "start" }}
                             >
                               {msg?.timestamp
                                 ? extractTimeFromTimestamp(msg?.timestamp)
                                 : time}
-                            </Text>
-                          </div>
-                        )}
-
-                        {msg?.sender?._id === user?.chatId && (
-                          <div className="flex items-end max-w-[50%] justify-end mr-2">
-                            <div className="bg-[#19335F] text-white rounded-l-xl rounded-br-xl py-2 px-3">
-                              <Text fontSize="sm">{msg?.message}</Text>
                             </div>
-                            <Text
-                              color="#CDD1ce"
-                              fontSize="xs"
-                              textAlign="end"
-                              className="ml-2"
-                            >
-                              {msg?.timestamp
-                                ? extractTimeFromTimestamp(msg?.timestamp)
-                                : time}
-                            </Text>
                           </div>
                         )}
                       </div>
 
-                      {/* Reference to last message */}
-                      {index === chatHistory.length - 1 && (
+                      {index === chatHistory?.length - 1 && (
                         <div ref={lastMessageRef} />
                       )}
                     </div>
@@ -353,32 +243,7 @@ function Chatbox({
             )}
 
             {/* Message Input */}
-            <div className="flex justify-between items-center p-4 bg-[#323234] absolute bottom-0 w-[98%]">
-              <input
-                type="text"
-                value={newMessage}
-                disabled={errors}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-grow px-4 py-2 rounded-l-lg border bg-transparent text-[#19335F] border-gray-300 focus:outline-none"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") handleSendMessage();
-                }}
-              />
-              <button
-                onClick={handleSendMessage}
-                className="flex items-center justify-center px-4 pt-[0.8rem] pb-[0.8rem] text-white rounded-r-lg bg-[#B69B30] transition"
-              >
-                <FaPaperPlane />
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="flex justify-center items-center h-screen">
-            <p className="text-white text-lg">Let's Start Chat</p>
-          </div>
-        )}
-        <div className="flex justify-between items-center p-4 bg-[#323234] absolute rounded-[10px] bottom-0 w-[98%]">
+            <div className="flex justify-between items-center p-4 bg-[#323234] absolute rounded-[10px] bottom-0 w-[98%]">
               <input
                 type="text"
                 value={newMessage}
@@ -394,9 +259,15 @@ function Chatbox({
                 onClick={handleSendMessage}
                 className="flex items-center justify-center px-4 pt-[0.8rem] pb-[0.8rem] text-white rounded-r-lg bg-white transition"
               >
-                <FaPaperPlane className="text-blue-500"/>
+                <FaPaperPlane className="text-blue-500" />
               </button>
             </div>
+          </>
+        ) : (
+          <div className="flex justify-center items-center h-screen">
+            <p className="text-white text-lg">Let's Start Chat</p>
+          </div>
+        )}
       </div>
     </div>
   );
