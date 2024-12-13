@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
 import { MdMoreVert } from "react-icons/md";
+import { SOCKET_SERVER_URL } from "../Config/baseUrl";
 // import DeleteModal from "../../../Components/helpers/DeleteModal";
 function Chatbox({
   isSidebarOpen,
@@ -29,7 +30,6 @@ function Chatbox({
   const [currentchatpage, setCurrentchatpage] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const SOCKET_SERVER_URL = `https://chat.altawheedportal.com`;
   // const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
   const lastMessageRef = useRef(null);
   const toggleSidebar = () => {
