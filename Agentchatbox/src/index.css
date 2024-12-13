@@ -1,0 +1,16 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --primary-color: #22567d;
+  --raleway: "Raleway", sans-serif;
+  --poppins: "Poppins", sans-serif;
+  --lato: "Lato", sans-serif;
+}
+.bg-image {
+  background-image: url('./assets/bgimage.png');
+}
+
