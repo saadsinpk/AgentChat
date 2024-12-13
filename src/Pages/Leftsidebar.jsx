@@ -126,7 +126,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
               className={`flex items-center justify-between py-2 px-3 ${selectedUserId == contact?._id? 'bg-[#19335F] text-white':"bg-none text-white"} border-b border-gray-200 cursor-pointer mb-1`}
               onClick={() => {
                 setSelectedUserId(contact?._id)
-                handleGroupId(contact._id, contact.accessKey ? true : false, contact?.otherUserName)}
+                handleGroupId(contact._id, contact.receiverAccessKey, contact?.otherUserName)}
               }
             >
               <div className="flex">
