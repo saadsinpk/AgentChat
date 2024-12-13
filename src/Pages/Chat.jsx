@@ -11,11 +11,7 @@ function Chat() {
   const [contact, setcontact] = useState("");
   const [accessKey, setAccessKey] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 640) {
@@ -41,7 +37,7 @@ function Chat() {
     <div className="layoutbgimage w-full h-screen">
       <div className="flex">
         {/* Sidebar */}
-        <div className={`transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'w-[40%] md:w-[20%]' : 'hidden'} bg-[#B69B30] text-white h-screen overflow-y-auto`}>
+        <div className={`transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'w-[40%] md:w-[20%]' : 'hidden'} bg-black text-white h-screen overflow-y-auto`}>
           <Leftsidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} handleGroupId={handleGroupId} />
         </div>
 

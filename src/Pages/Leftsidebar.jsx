@@ -26,49 +26,49 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   };
   useEffect(()=>{
     setTimeout(() => {
-      fetchContacts()
+      // fetchContacts()
     }, 1000);
   },[search])
   // Fetch function for contacts
-  const fetchContacts = async (pagenum) => {
-    setLoadingMore(true); // Set loading state while fetching
-    try {
-      const response = await axios.get(
-        `${SOCKET_SERVER_URL}/api/chats/user-list/?perPage=10&page=${pagenum || 1}&search=${search || ""
-        }`,
-        {
-          headers: {
-            accesskey: user?.accessKey, // Assuming user has an accessKey
-          },
-        }
-      );
+  // const fetchContacts = async (pagenum) => {
+  //   setLoadingMore(true); // Set loading state while fetching
+  //   try {
+  //     const response = await axios.get(
+  //       `${SOCKET_SERVER_URL}/api/chats/user-list/?perPage=10&page=${pagenum || 1}&search=${search || ""
+  //       }`,
+  //       {
+  //         headers: {
+  //           accesskey: user?.accessKey, // Assuming user has an accessKey
+  //         },
+  //       }
+  //     );
 
-      if (response) {
-        const newUsers = response?.data?.data || [];
-        // console.log(response);
-        // console.log(newUsers);
-        if (newUsers.length === 0) {
-          sethasmore(false); // No more users to load
-        }
-        // Update the userList with new users
-        setuserList((prevChatUsers) => {
-          if (search) {
-            return newUsers.length > 0 ? newUsers : []; // Replace with search results
-          } else {
-            const uniqueUsers = newUsers.filter(
-              (newUser) =>
-                !prevChatUsers.some((user) => user._id === newUser._id)
-            );
-            return [...prevChatUsers, ...uniqueUsers];
-          }
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-    } finally {
-      setLoadingMore(false); // Set loading state to false once data is fetched
-    }
-  };
+  //     if (response) {
+  //       const newUsers = response?.data?.data || [];
+  //       // console.log(response);
+  //       // console.log(newUsers);
+  //       if (newUsers.length === 0) {
+  //         sethasmore(false); // No more users to load
+  //       }
+  //       // Update the userList with new users
+  //       setuserList((prevChatUsers) => {
+  //         if (search) {
+  //           return newUsers.length > 0 ? newUsers : []; // Replace with search results
+  //         } else {
+  //           const uniqueUsers = newUsers.filter(
+  //             (newUser) =>
+  //               !prevChatUsers.some((user) => user._id === newUser._id)
+  //           );
+  //           return [...prevChatUsers, ...uniqueUsers];
+  //         }
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching contacts:", error);
+  //   } finally {
+  //     setLoadingMore(false); // Set loading state to false once data is fetched
+  //   }
+  // };
 
   // Handle scroll to trigger next page fetch
   const handleScroll = () => {
@@ -90,12 +90,12 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   // Effect to fetch data when page number changes
   useEffect(() => {
     if (currentPage > 1 && hasmore) {
-      fetchContacts(currentPage);
+      // fetchContacts(currentPage);
     }
   }, [currentPage]);
   useEffect(() => {
     if (location?.pathname) {
-      fetchContacts(currentPage);
+      // fetchContacts(currentPage);
     }
   }, [location?.pathname]);
 
@@ -126,7 +126,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
         ref={containerRef}
         className="fetchcontact my-4 max-h-[300px] overflow-y-auto" // Adjust height and overflow
       >
-        {userList.length > 0 ? (
+        {/* {userList.length > 0 ? (
           userList.map((contact, index) => (
             <div
               key={contact._id || index} // Unique key, fallback to index if needed
@@ -163,7 +163,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
         ) : (
           <div className="text-center">No contacts found</div> // Show message if no contacts
         )}
-        {loadingMore && <div className="text-center py-4">Loading more...</div>}{" "}
+        {loadingMore && <div className="text-center py-4">Loading more...</div>}{" "} */}
         {/* Loading state */}
       </div>
     </div>
