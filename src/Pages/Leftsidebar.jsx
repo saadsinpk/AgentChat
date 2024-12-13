@@ -117,7 +117,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
       <SearchBar SearchValue={handleSearch} />
       <div
         ref={containerRef}
-        className="fetchcontact my-4 max-h-[300px] overflow-y-auto" // Adjust height and overflow
+        className="scrollpagination my-4 max-h-[400px] overflow-y-auto" // Adjust height and overflow
       >
         {userList.length > 0 ? (
           userList.map((contact, index) => (

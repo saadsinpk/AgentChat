@@ -209,7 +209,7 @@ function Chatbox({
             isSidebarOpen ? "text-start" : "text-center"
           }`}
         >
-          <p className="text-[#19335F] font-bold text-[25px] font-Cairo">
+          <p className="text-white font-bold text-[25px] font-Cairo">
             {ContactName ? ContactName : "Unknown"}
           </p>
         </div>

@@ -13,4 +13,28 @@
 .bg-image {
   background-image: url('./assets/bgimage.png');
 }
+.scrollpagination {
+  max-height: 400px; /* Restricts height */
+  color: white !important; /* Ensures text color */
+  overflow-y: auto; /* Adds vertical scrolling */
+  border-radius: 8px; /* Rounds the corners */
+  padding: 10px; /* Adds spacing inside the container */
+  scrollbar-width: thin; /* Makes scrollbar thinner for better appearance */
+  scrollbar-color: white black; /* Customizes scrollbar color */
+}
+
+/* For webkit-based browsers like Chrome */
+.scrollpagination::-webkit-scrollbar {
+  width: 8px; /* Width of scrollbar */
+}
+
+.scrollpagination::-webkit-scrollbar-thumb {
+  background-color: white; /* Scrollbar thumb color */
+  border-radius: 8px; /* Rounded scrollbar thumb */
+}
+
+.scrollpagination::-webkit-scrollbar-track {
+  background-color: #B69B30; /* Scrollbar track color */
+}
+
 
