@@ -37,14 +37,14 @@ function Chat() {
     <div className="layoutbgimage w-full h-screen">
       <div className="flex">
         {/* Sidebar */}
-        <div className={`transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'w-[40%] md:w-[20%]' : 'hidden'} bg-black text-white h-screen overflow-y-auto`}>
+        <div className={`transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'w-[40%] md:w-[20%]' : 'hidden'} bg-black border-r-[2px] border-white text-white h-screen overflow-y-auto`}>
           <Leftsidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} handleGroupId={handleGroupId} />
         </div>
 
         {/* Right side - Chatbox */}
-        {/* <div className={`transition-all duration-300 ease-in-out relative ${isSidebarOpen ? 'w-[60%] md:w-[80%]' : 'w-full'} pb-5 text-white h-screen overflow-y-auto`}>
+        <div className={`transition-all duration-300 bg-black ease-in-out relative ${isSidebarOpen ? 'w-[60%] md:w-[80%]' : 'w-full'} pb-5 text-white h-screen overflow-y-auto`}>
           <Chatbox isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} ContactName={ContactName} groupIds={groupId} accessKey={accessKey}/>
-        </div> */}
+        </div>
       </div>
     </div>
   );

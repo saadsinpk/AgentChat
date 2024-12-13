@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaPaperPlane } from "react-icons/fa";
-import { Button, Heading, Stack, Text,  } from "@chakra-ui/react";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
@@ -216,7 +215,7 @@ function Chatbox({
         </div>
 
         {/* Right side - Optional placeholder for additional elements */}
-        <div className="flex gap-2 items-center">
+        {/* <div className="flex gap-2 items-center">
           <Button
             colorScheme="white"
             size="md"
@@ -266,7 +265,7 @@ function Chatbox({
               </ul>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-col space-y-4 mb-4 max-h-[500px] overflow-y-auto py-5 px-3">
         {groupIds ? (
@@ -290,13 +289,9 @@ function Chatbox({
                     <div key={index}>
                       {index === 0 || isDifferentDay ? (
                         <div className="flex justify-center my-8">
-                          <Heading
-                            as="h6"
-                            size="md"
-                            className="p-1 rounded-md text-[#B69B30]"
-                          >
+                         <h6  className="p-1 rounded-md text-[#B69B30]">
                             {formattedMessageDate}
-                          </Heading>
+                         </h6>
                         </div>
                       ) : null}
                       <div
@@ -353,12 +348,12 @@ function Chatbox({
               </div>
             ) : (
               <div className="flex justify-center items-center h-full">
-                <p className="text-gray-500 text-lg">No Message Found</p>
+                <p className="text-white text-lg">No Message Found</p>
               </div>
             )}
 
             {/* Message Input */}
-            <div className="flex justify-between items-center p-4 absolute bottom-0 w-[98%]">
+            <div className="flex justify-between items-center p-4 bg-[#323234] absolute bottom-0 w-[98%]">
               <input
                 type="text"
                 value={newMessage}
@@ -380,9 +375,28 @@ function Chatbox({
           </>
         ) : (
           <div className="flex justify-center items-center h-screen">
-            <p className="text-gray-500 text-lg">Letstartchat</p>
+            <p className="text-white text-lg">Let's Start Chat</p>
           </div>
         )}
+        <div className="flex justify-between items-center p-4 bg-[#323234] absolute rounded-[10px] bottom-0 w-[98%]">
+              <input
+                type="text"
+                value={newMessage}
+                disabled={errors}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-grow px-4 py-2 rounded-l-lg border bg-white text-black border-gray-300 focus:outline-none"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") handleSendMessage();
+                }}
+              />
+              <button
+                onClick={handleSendMessage}
+                className="flex items-center justify-center px-4 pt-[0.8rem] pb-[0.8rem] text-white rounded-r-lg bg-white transition"
+              >
+                <FaPaperPlane className="text-blue-500"/>
+              </button>
+            </div>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ function SearchBar({ SearchValue }) {
   return (
     <div className="flex justify-center items-center p-4 w-full">
       <div className="relative w-full md:w-full">
-        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white">
           <FiSearch />
         </div>
         <input
@@ -23,7 +23,7 @@ function SearchBar({ SearchValue }) {
           placeholder="Search..."
           value={search}
           onChange={handleSearch}
-          className="w-full bg-[#19335F] text-white placeholder-gray-400 py-2 pl-8 pr-4 rounded-full border-none focus:outline-none focus:ring-2 focus:ring-gray-500"
+          className="w-full bg-white text-black placeholder-black py-2 pl-8 pr-4 rounded-full border-none focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
         {search && (
           <button
