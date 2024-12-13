@@ -4,6 +4,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import defaultimage from "../assets/images/default.png"
+import { SOCKET_SERVER_URL } from "../Config/baseUrl";
 function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -15,8 +16,8 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   const location = useLocation();
   const containerRef = useRef(null);
   const debounceTimeout = useRef(null); // Debounce timeout ref
-  const SOCKET_SERVER_URL = "https://api.ahle.chat/"
-  const URL =  "https://api.ahle.chat/uploads"
+   
+    
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -27,7 +28,6 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
 
   // Fetch function for contacts
   const fetchContacts = async (pagenum) => {
-  console.log("ok");
     
     setLoadingMore(true); // Set loading state while fetching
     try {
@@ -36,11 +36,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
 
       if (response) {
         const newUsers = response?.data?.users || [];
-        console.log(response.data);
-        
-        // console.log(response);
-        // console.log(newUsers);
-        if (newUsers?.length === 0) {
+        if (newUsers.length === 0) {
           sethasmore(false); // No more users to load
         };
         // Update the userList with new users
@@ -133,7 +129,6 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
                 handleGroupId(contact._id, contact.accessKey ? true : false, contact?.otherUserName)}
               }
             >
-              {console.log(contact?.otherUserImage  || "defaultimage")    }
               <div className="flex">
                 <img
                   // src={`${URL}/uploads/${contact?.images || ''}` || defaultimage}
