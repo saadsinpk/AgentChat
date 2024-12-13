@@ -4,7 +4,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import defaultimage from "../assets/images/default.png"
-import { SOCKET_SERVER_URL } from "../Config/baseUrl";
+import { agentEmail, SOCKET_SERVER_URL } from "../Config/baseUrl";
 function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
     setLoadingMore(true); // Set loading state while fetching
     try {
       const response = await axios.get(
-        `${SOCKET_SERVER_URL}api/chats/users?userEmail=afaque.memon22@gmail.com&search=${search||""}&perPage=10&page=${pagenum||1}`);
+        `${SOCKET_SERVER_URL}api/chats/users?userEmail=${agentEmail}&search=${search||""}&perPage=10&page=${pagenum||1}`);
 
       if (response) {
         const newUsers = response?.data?.users || [];

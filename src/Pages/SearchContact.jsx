@@ -10,7 +10,10 @@ function SearchBar({ SearchValue }) {
     SearchValue(e.target.value);
   };
 
-  const handleClear = () => setsearch('');
+  const handleClear = () => {
+    SearchValue("")
+    setsearch("");
+  }
 
   return (
     <div className="flex justify-center items-center p-4 w-full">
