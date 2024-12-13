@@ -38,7 +38,7 @@ function Login() {
       
       setLoading(false); 
       setModal({})
-      navigate('/Agentchat')
+      navigate('/chat')
     } catch (error) {
       console.error(error);
   
