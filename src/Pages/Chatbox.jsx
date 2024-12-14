@@ -29,7 +29,8 @@ function Chatbox({
   const [errors, seterror] = useState("");
   const navigate = useNavigate();
 
-  const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
+  // const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
+  const SOCKET_SERVER_URL = "https://api.ahle.chat";
   const lastMessageRef = useRef(null);
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
