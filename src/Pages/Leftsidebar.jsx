@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import defaultimage from "../assets/images/default.png"
 import { agentEmail, SOCKET_SERVER_URL } from "../Config/baseUrl";
-function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
+function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -126,13 +126,13 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
               className={`flex items-center justify-between py-2 px-3 ${selectedUserId == contact?._id? 'bg-[#19335F] text-white':"bg-none text-white"} border-b border-gray-200 cursor-pointer mb-1`}
               onClick={() => {
                 setSelectedUserId(contact?._id)
-                handleGroupId(contact._id, contact.receiverAccessKey, contact?.otherUserName)}
+                handleGroupId(contact._id, contact.receiverAccessKey, contact?.otherUserName, contact?.otherUserImage)}
               }
             >
               <div className="flex">
                 <img
                   // src={`${URL}/uploads/${contact?.images || ''}` || defaultimage}
-                  src={contact?.otherUserImage  || defaultimage}
+                  src={userImage  || defaultimage}
                   className="w-10 h-10 rounded-full mr-3"
                   style={{ border: "1px solid white" }}
                   onError={(e) => {
@@ -144,13 +144,12 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
                   <p className="text-sm font-medium font-Cairo">
                     {contact?.otherUserName || "Unknown"}
                   </p>
-                  <p className={`${selectedUserId == contact?._id? 'text-white':" text-gray-800"} text-[10px]`}> {contact?.lastMessage?.length>15? contact?.lastMessage?.slice(0, 15) + "...":contact?.lastMessage}</p>
+                  <p className={`${selectedUserId == contact?._id? 'text-white':" text-gray-800"} text-white text-[10px]`}> {contact?.lastMessageContent?.length>15? contact?.lastMessageContent?.slice(0, 15) + "...":contact?.lastMessageContent}</p>
                 </div>
               </div>
               {
                 contact?.seen === false ? (
-                  <span className="h-[10px] w-[10px] bg-white rounded-full mr-2"
-                    
+                  <span className="h-[10px] w-[10px] bg-white rounded-full mr-2"                    
                   ></span>
                 ) : ''
               }

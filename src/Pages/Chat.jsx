@@ -10,6 +10,7 @@ function Chat() {
   const [groupId, setGroupId] = useState("");
   const [contact, setcontact] = useState("");
   const [accessKey, setAccessKey] = useState("");
+  const [userImage, setUserImage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,9 +28,10 @@ function Chat() {
       window.removeEventListener('resize', handleResize);
     };
   }, [setIsSidebarOpen]);
-  const handleGroupId=(value,isaccess,contactname)=>{
+  const handleGroupId=(value,isaccess,contactname,image)=>{
     console.log("object",value);
     setGroupId(value)
+    setUserImage(image)
     setAccessKey(isaccess)
     setContactName(contactname)
   }
@@ -38,7 +40,7 @@ function Chat() {
       <div className="flex">
         {/* Sidebar */}
         <div className={`transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'w-[40%] md:w-[20%]' : 'hidden'} bg-black border-r-[2px] border-white text-white h-screen overflow-y-auto`}>
-          <Leftsidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} handleGroupId={handleGroupId} />
+          <Leftsidebar setIsSidebarOpen={setIsSidebarOpen} userImage={userImage} isSidebarOpen={isSidebarOpen} handleGroupId={handleGroupId} />
         </div>
 
         {/* Right side - Chatbox */}
@@ -51,3 +53,4 @@ function Chat() {
 }
 
 export default Chat;
+

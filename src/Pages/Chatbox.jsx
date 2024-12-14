@@ -36,15 +36,12 @@ function Chatbox({
     if (!groupIds) {
       return;
     }
-    const idParam = groupIds;
-    const idKey = accessKey === true ? "receiverId" : "groupId";
     const url = `${SOCKET_SERVER_URL}/api/chats/history?otherUserEmail=${groupIds}&userEmail=${
       "sender@gmail.com" || agentEmail
-    }`;
+    }&page=1&perPage=50`;
 
     try {
       const res = await axios.get(url);
-      console.log("Response:", res); // Log response for debugging
       setChatHistory(res.data.messages);
     } catch (error) {
       const errorMessage =
@@ -54,25 +51,33 @@ function Chatbox({
       seterror(errorMessage);
     }
   };
-  
+
+  useEffect(() => {
+    fetchChatHistory();
+  }, [SOCKET_SERVER_URL, groupIds]);
+
   useEffect(() => {
     const newSocket = io(SOCKET_SERVER_URL);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
       console.log("Socket connected");
-      const joinData = { email: groupIds };
+      const joinData = { email: "sender@gmail.com" || groupIds };
       newSocket.emit("joinRoom", joinData);
     });
 
     // Listen for new messages
     newSocket.on("newMsg", (message) => {
-      setChatHistory((prevChatHistory) => [...prevChatHistory, message]);
+      console.log("New message received:", message);
+      setChatHistory((prevMessages) => [...prevMessages, message]);
     });
+
     newSocket.on("error", (message) => {
-      console.log(message);
+      console.log("New message received:", message);
+      alert(message);
     });
-    fetchChatHistory();
+
+    // fetchChatHistory();
 
     return () => {
       newSocket.close();
@@ -138,6 +143,15 @@ function Chatbox({
     <div className="w-full ">
       <div className="flex justify-between items-center p-4 border-b-2 border-gray-200">
         {/* Left side - Hamburger menu */}
+        <img
+          src={contact?.otherUserImage || defaultimage}
+          className="w-10 h-10 rounded-full mr-3"
+          style={{ border: "1px solid white" }}
+          // onError={(e) => {
+          //   e.target.onerror = null; // Prevent infinite loop in case default image is also not found
+          //   e.target.src = defaultimage; // Set to default image
+          // }}
+        />
         <div className="flex-shrink-0">
           {!isSidebarOpen && (
             <RxHamburgerMenu
@@ -177,6 +191,7 @@ function Chatbox({
 
                   return (
                     <div key={index}>
+                      {/* Display Date Header */}
                       {index === 0 || isDifferentDay ? (
                         <div className="flex justify-center my-8">
                           <h6 className="p-1 rounded-md text-white">
@@ -184,16 +199,38 @@ function Chatbox({
                           </h6>
                         </div>
                       ) : null}
+
+                      {/* Message Bubble */}
                       <div
                         className={`flex ${
-                          msg?.sender?._id === agentEmail
+                          msg?.senderEmail === "sender@gmail.com"
                             ? "justify-end"
                             : "justify-start"
                         } mb-2`}
                       >
-                        {msg?.sender?.senderEmail !== agentEmail && (
+                        {/* Sender's Message */}
+                        {msg?.senderEmail === "sender@gmail.com" && (
+                          <div className="flex items-end max-w-[70%] mr-2">
+                            {/* <div className="text-[white] bg-[#4CAF50] rounded-l-xl rounded-br-xl py-2 px-3"> */}
+                            <div className="text-black bg-[#f7f7f7] rounded-r-xl rounded-bl-xl py-2 px-3">
+                              <div className="text-sm">{msg?.message}</div>
+                            </div>
+                            <div
+                              className="text-xs text-[#CDD1ce] mr-2 mx-2 mb-5"
+                              style={{ textAlign: "end" }}
+                            >
+                              {msg?.timestamp
+                                ? extractTimeFromTimestamp(msg?.timestamp)
+                                : time}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Receiver's Message */}
+                        {msg?.senderEmail !== "sender@gmail.com" && (
                           <div className="flex items-start max-w-[70%] ml-2">
-                            <div className="text-[white] bg-[#19335F] rounded-r-xl rounded-bl-xl py-2 px-3">
+                            {/* <div className="text-[white] bg-[#19335F] rounded-r-xl rounded-bl-xl py-2 px-3"> */}
+                            <div className="text-[white] bg-[#0496ff] rounded-l-xl rounded-br-xl py-2 px-3">
                               <div className="text-sm">{msg?.message}</div>
                             </div>
                             <div
@@ -208,6 +245,7 @@ function Chatbox({
                         )}
                       </div>
 
+                      {/* Scroll to last message */}
                       {index === chatHistory?.length - 1 && (
                         <div ref={lastMessageRef} />
                       )}
