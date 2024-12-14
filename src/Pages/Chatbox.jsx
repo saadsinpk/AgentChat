@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
 import { MdMoreVert } from "react-icons/md";
-import { SOCKET_SERVER_URL } from "../Config/baseUrl";
+import { agentEmail, SOCKET_SERVER_URL } from "../Config/baseUrl";
 // import DeleteModal from "../../../Components/helpers/DeleteModal";
 function Chatbox({
   isSidebarOpen,
@@ -25,26 +25,22 @@ function Chatbox({
     return `${hours}:${minutes}`;
   });
   const [errors, seterror] = useState("");
-  const [isdelete, setisdelete] = useState(false);
   const navigate = useNavigate();
-  const [currentchatpage, setCurrentchatpage] = useState(1);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  // const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
+
+  const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
   const lastMessageRef = useRef(null);
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  console.log(groupIds);
   const fetchChatHistory = async () => {
     if (!groupIds) {
       return;
     }
-
-    // Construct URL based on accessKey
     const idParam = groupIds;
     const idKey = accessKey === true ? "receiverId" : "groupId";
-    const url = `${SOCKET_SERVER_URL}/api/chats/history?otherUserEmail=${groupIds}&userEmail=sender@gmail.com`;
+    const url = `${SOCKET_SERVER_URL}/api/chats/history?otherUserEmail=${groupIds}&userEmail=${
+      "sender@gmail.com" || agentEmail
+    }`;
 
     try {
       const res = await axios.get(url);
@@ -56,30 +52,21 @@ function Chatbox({
         "An error occurred while fetching chat history.";
       console.error("Error fetching chat history:", errorMessage);
       seterror(errorMessage);
-      // toast({
-      //   title: "Error",
-      //   status: "error",
-      //   description: errorMessage,
-      //   duration: 2000,
-      //   isClosable: true,
-      // });
     }
   };
-
+  
   useEffect(() => {
     const newSocket = io(SOCKET_SERVER_URL);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
       console.log("Socket connected");
-      const joinData = { groupId: groupIds };
+      const joinData = { email: groupIds };
       newSocket.emit("joinRoom", joinData);
     });
 
     // Listen for new messages
-    newSocket.on("newMsges", (message) => {
-      console.log(message);
-
+    newSocket.on("newMsg", (message) => {
       setChatHistory((prevChatHistory) => [...prevChatHistory, message]);
     });
     newSocket.on("error", (message) => {
@@ -94,16 +81,18 @@ function Chatbox({
 
   const handleSendMessage = () => {
     if (newMessage) {
-      let messageData;
-      messageData = {
-        senderId: 'sender@gmail.com',
+      let messageData = {
+        senderEmail: "sender@gmail.com" || agentEmail,
+        senderName: "sneder" || "Agent",
+        receiverEmail: groupIds,
+        receiverName: ContactName,
         messageContent: newMessage,
-        accessKey: user?.accessKey,
-        receiverId: groupIds,
-        timestamp: new Date().toISOString(), // Add timestamp for sorting message
+        senderAccessKey: "100",
+        receiverAccessKey: accessKey,
+        senderImage: "",
+        receiverImage: "",
       };
-      console.log("messageData", messageData);
-      socket.emit("sendMessageUser", messageData);
+      socket.emit("sendMessage", messageData);
       formatMessageDate(new Date());
       setNewMessage(""); // Clear the message input
     }
@@ -197,12 +186,12 @@ function Chatbox({
                       ) : null}
                       <div
                         className={`flex ${
-                          msg?.sender?._id === "sender@gmail.com"
+                          msg?.sender?._id === agentEmail
                             ? "justify-end"
                             : "justify-start"
                         } mb-2`}
                       >
-                        {msg?.sender?.senderEmail !== "sender@gmail.com" && (
+                        {msg?.sender?.senderEmail !== agentEmail && (
                           <div className="flex items-start max-w-[70%] ml-2">
                             <div className="text-[white] bg-[#19335F] rounded-r-xl rounded-bl-xl py-2 px-3">
                               <div className="text-sm">{msg?.message}</div>
