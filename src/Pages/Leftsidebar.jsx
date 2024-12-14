@@ -149,7 +149,7 @@ function Leftsidebar({ setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
               </div>
               {
                 contact?.seen === false ? (
-                  <span className="h-[10px] w-[10px] bg-[#B69B30] rounded-full mr-2"
+                  <span className="h-[10px] w-[10px] bg-white rounded-full mr-2"
                     
                   ></span>
                 ) : ''

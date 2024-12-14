@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <div
-        className="relative w-full h-screen bg-cover bg-center bg-gray-800 filter grayscale bg-image"
+        className="w-full h-screen  bg-image"
       >
         <Login />
       </div>

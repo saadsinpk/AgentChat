@@ -12,6 +12,7 @@
 }
 .bg-image {
   background-image: url('./assets/bgimage.png');
+  background-repeat: no-repeat;
 }
 .scrollpagination {
   max-height: 400px; /* Restricts height */

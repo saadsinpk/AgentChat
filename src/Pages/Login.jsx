@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-
+import bgimage from '../assets/bgimage.png'
 function Login() {
   const [loading, setLoading] = useState(false);
   const [model, setModal] = useState({
@@ -65,8 +65,12 @@ function Login() {
 
   return (
     <>
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-70"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-96 z-10">
+    <div className="grid grid-cols-2 h-screen w-full">
+      <div className="grid cols-span-1 ">
+            <img src={bgimage} alt="" className='w-[99%] h-screen'/>
+      </div>
+      <div className="grid cols-span-1 bg-black justify-center items-center">
+      <div className="flex items-center justify-center flex-col h-[50%] bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-96 z-10">
         <h2 className="text-3xl font-bold text-center text-gray-900">Login</h2>
         <input
           type="email"
@@ -102,6 +106,8 @@ function Login() {
           )}
         </button>
       </div>
+      </div>
+    </div>
         <ToastContainer />
     </>
   );
