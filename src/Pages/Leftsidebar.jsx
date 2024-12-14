@@ -3,9 +3,14 @@ import SearchBar from "./SearchContact";
 import { RxCross2 } from "react-icons/rx";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import defaultimage from "../assets/images/default.png"
+import defaultimage from "../assets/images/default.png";
 import { agentEmail, SOCKET_SERVER_URL } from "../Config/baseUrl";
-function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId }) {
+function Leftsidebar({
+  userImage,
+  setIsSidebarOpen,
+  isSidebarOpen,
+  handleGroupId,
+}) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,8 +21,7 @@ function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId
   const location = useLocation();
   const containerRef = useRef(null);
   const debounceTimeout = useRef(null); // Debounce timeout ref
-   
-    
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -28,17 +32,19 @@ function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId
 
   // Fetch function for contacts
   const fetchContacts = async (pagenum) => {
-    
     setLoadingMore(true); // Set loading state while fetching
     try {
       const response = await axios.get(
-        `${SOCKET_SERVER_URL}/api/chats/users?userEmail=${'sender@gmail.com'|| agentEmail}&search=${search||""}&perPage=10&page=${pagenum||1}`);
+        `${SOCKET_SERVER_URL}/api/chats/users?userEmail=${
+          "sender@gmail.com" || agentEmail
+        }&search=${search || ""}&perPage=10&page=${pagenum || 1}`
+      );
 
       if (response) {
         const newUsers = response?.data?.users || [];
         if (newUsers.length === 0) {
           sethasmore(false); // No more users to load
-        };
+        }
         // Update the userList with new users
         setuserList((prevChatUsers) => {
           if (search) {
@@ -58,11 +64,11 @@ function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId
       setLoadingMore(false); // Set loading state to false once data is fetched
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     setTimeout(() => {
-      fetchContacts()
+      fetchContacts();
     }, 1000);
-  },[search])
+  }, [search]);
   // Handle scroll to trigger next page fetch
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -121,43 +127,93 @@ function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId
       >
         {userList.length > 0 ? (
           userList.map((contact, index) => (
+            // <div
+            //   key={contact._id || index} // Unique key, fallback to index if needed
+            //   className={`flex items-center justify-between py-2 px-3 ${selectedUserId == contact?._id? 'bg-[#19335F] text-white':"bg-none text-white"} border-b border-gray-200 cursor-pointer mb-1`}
+            //   onClick={() => {
+            //     setSelectedUserId(contact?._id)
+            //     handleGroupId(contact._id, contact.receiverAccessKey, contact?.otherUserName, contact?.otherUserImage)}
+            //   }
+            // >
+            //   <div className="flex">
+            //     <img
+            //       // src={`${URL}/uploads/${contact?.images || ''}` || defaultimage}
+            //       src={userImage  || defaultimage}
+            //       className="w-10 h-10 rounded-full mr-3"
+            //       style={{ border: "1px solid white" }}
+            //       onError={(e) => {
+            //         e.target.onerror = null; // Prevent infinite loop in case default image is also not found
+            //         e.target.src = defaultimage; // Set to default image
+            //       }}
+            //     />
+            //     <div>
+            //       <p className="text-sm font-medium font-Cairo">
+            //         {contact?.otherUserName || "Unknown"}
+            //       </p>
+            //       <p className={`${selectedUserId == contact?._id? 'text-white':" text-gray-800"} text-white text-[10px]`}> {contact?.lastMessageContent?.length>15? contact?.lastMessageContent?.slice(0, 15) + "...":contact?.lastMessageContent}</p>
+            //     </div>
+            //   </div>
+            //   {
+            //     contact?.seen === false ? (
+            //       <span className="h-[10px] w-[10px] bg-white rounded-full mr-2"
+            //       ></span>
+            //     ) : ''
+            //   }
+
+            // </div>
             <div
-              key={contact._id || index} // Unique key, fallback to index if needed
-              className={`flex items-center justify-between py-2 px-3 ${selectedUserId == contact?._id? 'bg-[#19335F] text-white':"bg-none text-white"} border-b border-gray-200 cursor-pointer mb-1`}
+              key={contact._id || index}
+              className={`flex items-center justify-between py-3 px-4 rounded-lg my-3 ${
+                selectedUserId == contact?._id
+                  ? "bg-[#0496ff] text-white"
+                  : "bg-transparent hover:bg-gray-100 text-gray-800 bg-[#0496ff] text-black"
+              } border border-ligthgray cursor-pointer transition duration-200 text-white hover:text-black`}
               onClick={() => {
-                setSelectedUserId(contact?._id)
-                handleGroupId(contact._id, contact.receiverAccessKey, contact?.otherUserName, contact?.otherUserImage)}
-              }
+                setSelectedUserId(contact?._id);
+                handleGroupId(
+                  contact._id,
+                  contact.receiverAccessKey,
+                  contact?.otherUserName,
+                  contact?.otherUserImage
+                );
+              }}
             >
-              <div className="flex">
+              <div className="flex items-center">
                 <img
-                  // src={`${URL}/uploads/${contact?.images || ''}` || defaultimage}
-                  src={userImage  || defaultimage}
-                  className="w-10 h-10 rounded-full mr-3"
-                  style={{ border: "1px solid white" }}
+                  src={contact?.otherUserImage || defaultimage}
+                  className="w-12 h-12 rounded-full border border-white object-cover"
                   onError={(e) => {
-                    e.target.onerror = null; // Prevent infinite loop in case default image is also not found
-                    e.target.src = defaultimage; // Set to default image
+                    e.target.onerror = null;
+                    e.target.src = defaultimage;
                   }}
                 />
-                <div>
-                  <p className="text-sm font-medium font-Cairo">
+                <div className="ml-3">
+                  <p className="text-base font-semibold font-Cairo truncate">
                     {contact?.otherUserName || "Unknown"}
                   </p>
-                  <p className={`${selectedUserId == contact?._id? 'text-white':" text-gray-800"} text-white text-[10px]`}> {contact?.lastMessageContent?.length>15? contact?.lastMessageContent?.slice(0, 15) + "...":contact?.lastMessageContent}</p>
+                  <p
+                    className={`${
+                      selectedUserId == contact?._id
+                        ? "text-gray-300"
+                        : "text-gray-500"
+                    } text-sm truncate`}
+                  >
+                    {contact?.lastMessageContent?.length > 20
+                      ? contact?.lastMessageContent.slice(0, 20) + "..."
+                      : contact?.lastMessageContent || "No recent messages"}
+                  </p>
                 </div>
               </div>
-              {
-                contact?.seen === false ? (
-                  <span className="h-[10px] w-[10px] bg-white rounded-full mr-2"                    
-                  ></span>
-                ) : ''
-              }
-
+              {contact?.seen === false && (
+                <span
+                  className="h-3 w-3 bg-blue-500 rounded-full"
+                  title="Unread message"
+                ></span>
+              )}
             </div>
           ))
         ) : (
-          <div className="text-center">No contacts found</div> // Show message if no contacts
+          <div className="text-center">No contacts found</div>
         )}
         {loadingMore && <div className="text-center py-4">Loading more...</div>}{" "}
         {/* Loading state */}
