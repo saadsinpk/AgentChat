@@ -135,10 +135,10 @@ function Leftsidebar({ userImage, setIsSidebarOpen, isSidebarOpen, handleGroupId
                   src={userImage  || defaultimage}
                   className="w-10 h-10 rounded-full mr-3"
                   style={{ border: "1px solid white" }}
-                  onError={(e) => {
-                    e.target.onerror = null; // Prevent infinite loop in case default image is also not found
-                    e.target.src = defaultimage; // Set to default image
-                  }}
+                  // onError={(e) => {
+                  //   e.target.onerror = null; // Prevent infinite loop in case default image is also not found
+                  //   e.target.src = defaultimage; // Set to default image
+                  // }}
                 />
                 <div>
                   <p className="text-sm font-medium font-Cairo">
