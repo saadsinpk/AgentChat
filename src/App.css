@@ -2,3 +2,40 @@
   margin: 0px;
   padding: 0px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer utilities {
+  .no-scrollbar-arrows::-webkit-scrollbar-button {
+    display: none; /* Hides the scrollbar arrows */
+  }
+
+  .thin-scrollbar {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: gray transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 4px; /* Thin scrollbar */
+    background-color: transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 10px;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: darkgray;
+  }
+}
+.no-arrow {
+  -webkit-appearance: none; /* Removes default dropdown arrow (Webkit browsers) */
+  -moz-appearance: none; /* Removes default dropdown arrow (Firefox) */
+  appearance: none; /* Standard property */
+  background: transparent; /* Ensures background doesn't show unwanted visuals */
+  padding-right: 10px; /* Optional: Adjust padding to align text properly */
+}
