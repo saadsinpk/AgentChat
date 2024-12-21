@@ -35,9 +35,9 @@ function Leftsidebar({
     setLoadingMore(true); // Set loading state while fetching
     try {
       const response = await axios.get(
-        `${SOCKET_SERVER_URL}/api/chats/users?userEmail=${
-          "sender@gmail.com" || agentEmail
-        }&search=${search || ""}&perPage=10&page=${pagenum || 1}`
+        `${SOCKET_SERVER_URL}/api/chats/users?userEmail=${agentEmail}&role=agent&search=${
+          search || ""
+        }&perPage=10&page=${pagenum || 1}`
       );
 
       if (response) {
