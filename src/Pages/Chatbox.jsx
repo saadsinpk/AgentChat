@@ -31,7 +31,7 @@ function Chatbox({
   const navigate = useNavigate();
 
   // const SOCKET_SERVER_URL = `http://192.168.18.200:4001`;
-  const SOCKET_SERVER_URL = "https://api.ahle.chat";
+  const SOCKET_SERVER_URL = "https://chat.healthytrybe.com";
   const lastMessageRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -106,6 +106,9 @@ function Chatbox({
         receiverAccessKey: accessKey,
         senderImage: "",
         receiverImage: "",
+        file: "",
+        fileType: "",
+        filePath: "",
       };
       socket.emit("sendMessage", messageData);
       formatMessageDate(new Date());
