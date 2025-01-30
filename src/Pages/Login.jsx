@@ -17,7 +17,7 @@ function Login() {
   
     try {
       const response = await axios.post(
-        'https://phpstack-1250641-4484399.cloudwaysapps.com/api/agent/login',
+        'https://backend.healthytrybe.com/api/agent/login',
         model
       );
       console.log(response);
