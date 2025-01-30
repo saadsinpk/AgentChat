@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaPaperPlane } from "react-icons/fa";
-import { IoMdAdd } from "react-icons/io";
+import { MdAttachFile, MdClose } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { PiFilePdf } from "react-icons/pi";
+import { FaImage } from "react-icons/fa6";
 import io from "socket.io-client";
+import { CgSpinner } from "react-icons/cg";
 import axios from "axios";
-import { MdMoreVert } from "react-icons/md";
+import { saveAs } from "file-saver";
 import { agentEmail, SOCKET_SERVER_URL } from "../Config/baseUrl";
 // import DeleteModal from "../../../Components/helpers/DeleteModal";
 import defaultimage from "../assets/images/default.png";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import styles
 function Chatbox({
   isSidebarOpen,
   setIsSidebarOpen,
@@ -17,9 +22,14 @@ function Chatbox({
   ContactName,
   userImage,
 }) {
+  // const toast = useToast();
+  const fileInputRef = useRef(null);
+  const [selectedFileUrl, setSelectedFileUrl] = useState();
+  const [selectedFileType, setSelectedFileType] = useState();
   const [chatHistory, setChatHistory] = useState([]);
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState("");
+  const [createLoading, setCreateLoading] = useState(false);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
   const [time, setTime] = useState(() => {
     const currentDate = new Date();
@@ -62,6 +72,100 @@ function Chatbox({
     }
   };
 
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file); // Use 'file' directly, not 'selectedFile'
+    setCreateLoading(true);
+
+    try {
+      const response = await axios.post(
+        "https://chat.healthytrybe.com//api/chats/upload", // Fixed URL
+        formData, // Correctly send FormData
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Ensure correct content type
+          },
+        }
+      );
+
+      const updatedUrl = response.data.url.replace(
+        "https://api.ahle.chat/uploads/",
+        "https://chat.healthytrybe.com/uploads/"
+      );
+      console.log(updatedUrl, "Upload Response");
+      if (updatedUrl) {
+        console.log(updatedUrl, "Upload Response123123123");
+        handleSendMessage(updatedUrl, file.type);
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+
+      toast({
+        title: "Image Upload Failed!",
+        description: "Please try uploading the image again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const fetchWithTimeout = async (url, timeout = 10000) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error("File not found or server error");
+
+      return response;
+    } catch (error) {
+      console.error("Download failed:", error.message);
+      return null;
+    }
+  };
+
+  const downloadFile = async (fileUrl, fileType) => {
+    if (!fileUrl) return;
+
+    // Replace the base URL
+    const updatedFileUrl = fileUrl.replace(
+      "https://api.ahle.chat/uploads/",
+      "https://chat.healthytrybe.com/uploads/"
+    );
+
+    console.log("Checking file availability...");
+
+    const fileResponse = await fetchWithTimeout(updatedFileUrl);
+
+    if (!fileResponse) {
+      console.error("File download declined: Request timed out or failed.");
+      alert(
+        "Download failed: The file is not available or the request timed out."
+      );
+      return;
+    }
+
+    // Check if it's an image or PDF
+    if (fileType.startsWith("image")) {
+      console.log("Downloading image...");
+      saveAs(updatedFileUrl, "image.jpg"); // Download image
+    } else if (fileType === "application/pdf") {
+      console.log("Downloading PDF...");
+      saveAs(updatedFileUrl, "document.pdf"); // Download PDF
+    } else {
+      console.log("Downloading file...");
+      saveAs(updatedFileUrl, "file"); // Download other file types
+    }
+  };
+
   useEffect(() => {
     fetchChatHistory(true);
   }, [SOCKET_SERVER_URL, groupIds]);
@@ -94,8 +198,8 @@ function Chatbox({
     };
   }, [SOCKET_SERVER_URL, groupIds]);
 
-  const handleSendMessage = () => {
-    if (newMessage) {
+  const handleSendMessage = (fileUrl, fileType) => {
+    if (newMessage || fileUrl) {
       let messageData = {
         senderEmail: agentEmail,
         senderName: "Agent",
@@ -106,8 +210,8 @@ function Chatbox({
         receiverAccessKey: accessKey,
         senderImage: "",
         receiverImage: "",
-        file: "",
-        fileType: "",
+        file: fileUrl || "",
+        fileType: fileType || "",
         filePath: "",
       };
       socket.emit("sendMessage", messageData);
@@ -171,6 +275,7 @@ function Chatbox({
 
   return (
     <div className="w-full ">
+      <ToastContainer autoClose={3000} />
       <div className="flex justify-between items-center border-b-2 p-3 border-gray-200">
         <div className="flex-shrink-0">
           {!isSidebarOpen && (
@@ -261,7 +366,49 @@ function Chatbox({
                         {msg?.senderEmail === agentEmail && (
                           <div className="flex items-end max-w-[70%] mr-2">
                             <div className="text-black bg-[#f7f7f7] rounded-r-xl rounded-bl-xl py-2 px-3">
-                              <div className="text-sm">{msg?.message}</div>
+                              {/* Check if there's a file */}
+                              {msg?.file ? (
+                                <div className="mt-2">
+                                  {msg.fileType.startsWith("image") ? (
+                                    <div className="flex items-center space-x-2">
+                                      <img
+                                        src={msg.file.replace(
+                                          "https://api.ahle.chat/uploads/",
+                                          "https://chat.healthytrybe.com/uploads/"
+                                        )}
+                                        className="w-40 h-40 rounded-lg object-cover cursor-pointer"
+                                        onClick={() =>
+                                          downloadFile(
+                                            msg.file.replace(
+                                              "https://api.ahle.chat/uploads/",
+                                              "https://chat.healthytrybe.com/uploads/"
+                                            ),
+                                            msg.fileType
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  ) : msg.fileType === "application/pdf" ? (
+                                    <div className="flex items-center space-x-2 cursor-pointer">
+                                      <PiFilePdf size="30" />
+                                      <p
+                                        className="text-white-500"
+                                        onClick={() =>
+                                          downloadFile(msg.file, msg.fileType)
+                                        }
+                                      >
+                                        Download PDF
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <div className="text-xs text-white-500">
+                                      {msg.file || "File attachment"}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="text-sm">{msg?.message}</div>
+                              )}
                             </div>
                             <div
                               className="text-xs text-[#CDD1ce] mr-2 mx-2 mb-5"
@@ -278,7 +425,49 @@ function Chatbox({
                         {msg?.senderEmail !== agentEmail && (
                           <div className="flex items-start max-w-[70%] ml-2">
                             <div className="text-[white] bg-[#0496ff] rounded-l-xl rounded-br-xl py-2 px-3">
-                              <div className="text-sm">{msg?.message}</div>
+                              {/* Check if there's a file */}
+                              {msg?.file ? (
+                                <div className="mt-2">
+                                  {msg.fileType.startsWith("image") ? (
+                                    <div className="flex items-center space-x-2">
+                                      <img
+                                        src={msg.file.replace(
+                                          "https://api.ahle.chat/uploads/",
+                                          "https://chat.healthytrybe.com/uploads/"
+                                        )}
+                                        className="w-40 h-40 rounded-lg object-cover cursor-pointer"
+                                        onClick={() =>
+                                          downloadFile(
+                                            msg.file.replace(
+                                              "https://api.ahle.chat/uploads/",
+                                              "https://chat.healthytrybe.com/uploads/"
+                                            ),
+                                            msg.fileType
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  ) : msg.fileType === "application/pdf" ? (
+                                    <div className="flex items-center space-x-2 cursor-pointer">
+                                      <PiFilePdf size="30" />
+                                      <p
+                                        className="text-white-500"
+                                        onClick={() =>
+                                          downloadFile(msg.file, msg.fileType)
+                                        }
+                                      >
+                                        Download PDF
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <div className="text-xs text-white-500">
+                                      {msg.file || "File attachment"}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="text-sm">{msg?.message}</div>
+                              )}
                             </div>
                             <div
                               className="text-xs text-[#CDD1ce] ml-2"
@@ -313,6 +502,37 @@ function Chatbox({
                   if (e.key === "Enter") handleSendMessage();
                 }}
               />
+              <div className="flex flex-col items-start space-y-2">
+                {/* Attach Button */}
+                {/* <MdAttachFile
+                  size={42}
+                  className="p-2 bg-white text-black cursor-pointer"
+                  onClick={() => fileInputRef.current.click()}
+                /> */}
+                {createLoading ? (
+                  <CgSpinner
+                    className="animate-spin text-gray-500 "
+                    size={42}
+                  />
+                ) : (
+                  <MdAttachFile
+                    size={42}
+                    className="p-2 bg-white text-black cursor-pointer"
+                    onClick={() => fileInputRef.current.click()}
+                  />
+                )}
+
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg, image/jpg, application/pdf"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+
+                {/* Preview Selected File */}
+              </div>
               <button
                 onClick={handleSendMessage}
                 className="flex items-center justify-center px-4 pt-[0.8rem] pb-[0.8rem] text-white rounded-r-lg bg-white transition"
