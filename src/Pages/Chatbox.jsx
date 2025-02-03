@@ -323,7 +323,7 @@ function Chatbox({
           </p>
         )}
       </div>
-      <div className="flex flex-col space-y-4 mb-4 max-h-[500px] overflow-y-auto py-5 px-3">
+      <div className="flex flex-col space-y-4 mb-4 max-h-[570px] overflow-y-auto py-5 px-3">
         {groupIds ? (
           <>
             {chatHistory && chatHistory?.length > 0 ? (
@@ -425,7 +425,7 @@ function Chatbox({
                         {/* Receiver's Message */}
                         {msg?.senderEmail !== agentEmail && (
                           <div className="flex items-start max-w-[70%] ml-2">
-                            <div className="text-[white] bg-[#0496ff] rounded-l-xl rounded-br-xl py-2 px-3">
+                            <div className="text-[white] bg-[#0496ff] rounded-l-xl rounded-br-xl py-2 px-2">
                               {/* Check if there's a file */}
                               {msg?.file ? (
                                 <div className="mt-2">
