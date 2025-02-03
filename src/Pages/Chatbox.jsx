@@ -216,6 +216,7 @@ function Chatbox({
       };
       socket.emit("sendMessage", messageData);
       formatMessageDate(new Date());
+      fetchChatHistory()
       setNewMessage(""); // Clear the message input
     }
   };
